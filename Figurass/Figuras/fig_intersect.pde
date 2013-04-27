@@ -7,5 +7,5 @@ class fig_intersect
   {
     id = temp_id;
     distance = temp_distance;
-  }
+  }  
 }
