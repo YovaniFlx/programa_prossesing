@@ -3,11 +3,13 @@ class fig_distance
 {
   int id;
   float distance;
+  int color_;
   
-  fig_distance(int temp_id,float temp_distance)
+  fig_distance(int temp_id,float temp_distance, int temp_color_)
   {
     id = temp_id;
     distance = temp_distance;
+    color_ = temp_color_;
   }  
 }
 
