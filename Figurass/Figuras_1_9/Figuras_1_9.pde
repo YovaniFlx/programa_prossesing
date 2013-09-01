@@ -3,20 +3,23 @@
 //Figura[] Figuras = new Figura[200];
 float stop = 0;
 Figura[] Figuras;
-int total_figuras = 100;      //0
-float tamano = 30;//random(10,30); //1
+int total_figuras = 50;      //0
+float tamano = 80;//random(10,30); //1
 int triangulo =  1;           //2 
-int cuadro =     1;           //3
+int cuadro =     0;           //3
 int circulo =    0;           //4
 int traslape =   0;           //5
-int c_color =    0;           //6
+int c_color =    4;           //6
 int segir_otro = 0;           //7    seguir o no  0-1
 int Const_surface = 1;        //8    restringido o no    0-1 
-int rotate_ = 1;              //9    0-1
-int moveini = 1;              //10   cuatro movimientosiniciales  0-3
-int criterio_color = 0;       //11   0 = tiempo traslape, 1 = distancia traslape
+int rotate_ =    1;           //9    0-1
+int moveini =    0;           //10   cuatro movimientosiniciales  0-3
+int criterio_color = 0;       //11 
+int linea =      1;           //12
+int tipo  =      0;           //13
 
- float[] config = {total_figuras, tamano, triangulo, cuadro, circulo, traslape, c_color, segir_otro, Const_surface, rotate_, moveini, criterio_color};
+
+ float[] config = {total_figuras, tamano, triangulo, cuadro, circulo, traslape, c_color, segir_otro, Const_surface, rotate_, moveini, criterio_color,linea,tipo};
 
 void setup() 
 {
@@ -26,6 +29,7 @@ void setup()
 }
 void draw() 
 {
+  //background(0);
   smooth();
   noFill();
   colorMode(HSB);
@@ -38,7 +42,7 @@ void draw()
     Figuras[i].display(Figuras);
   } 
   mouseReleased();
-  if(frameCount == 100){
+  if(frameCount == 125){
     noLoop();
   }
     

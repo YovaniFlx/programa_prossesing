@@ -4,13 +4,12 @@ abstract class Figura
    float[] configuration;
    int id;  //identificador de cada figura
    float size_shape;  //tamaño de cada figura
-   boolean follow;  //variable booleana para saber si puede seguir a otro
+   boolean follow, bandera;  //variable booleana para saber si puede seguir a otro
    PVector location;  //variable que tiene la posicion actual de la figura
    PVector velocity;  //variable de la velocidad de la figura
    color[] colors = new color[10];
-   //PVector acceleration;
    int c, contframe = 0;
-   float counter = 10;
+   float counter = 0;
    float topspeed;
    fig_distance[] distance = new fig_distance[1000];  //arreglo que guarda el id de la figura y la distancia cuando estan una sobre otra
   
@@ -19,25 +18,13 @@ abstract class Figura
     configuration = config;
     id = id_temp;
     size_shape = config[1];
-    //c = color(100,50);
     follow = false;
     location = new PVector(random(width),random(height));
     topspeed = random(1,5);
     //velocity = new PVector(0,0);
     //acceleration = new PVector(-0.001,0.01);
-    velocity = new PVector(random(-2,2),random(-2,2));
+    velocity = new PVector(random(-1,1),random(-1,1));
     for(int i = 0;i < distance.length; i++) {distance[i] = new fig_distance(-1, 0.0, 0);}
- 
-//     colors[0] = color(#007F6A); 
-//     colors[1] = color(#007F6A); 
-//     colors[2] = color(#4CFFE1); 
-//     colors[3] = color(#4CFFE1); 
-//     colors[4] = color(#00FFD5);  
-//     colors[5] = color(#00FFD5);  
-//     colors[6] = color(#767F7E);  
-//     colors[7] = color(#767F7E);  
-//     colors[8] = color(#00CCAA); 
-//     colors[9] = color(#00CCAA);
 
       colors[0] = color(#B29253);
       colors[1] = color(#B29253);
@@ -58,113 +45,146 @@ abstract class Figura
     PVector newlocation = new PVector(0,0);
     PVector newvelocity = new PVector(0,0);
     int ind = 0;
-     if((frameCount == 1) && (configuration[10] == 0)){
-       move0();
-     }
-     else if((frameCount == 1) && (configuration[10] == 1)){
-       move1();
-     }
-     else if((frameCount == 1) && (configuration[10] == 2)){
-       move2();
-     }
-    
+    if((frameCount == 1) && (configuration[10] == 0)){
+      move0();
+    }
+    else if((frameCount == 1) && (configuration[10] == 1)){
+      move1();
+    }
+    else if((frameCount == 1) && (configuration[10] == 2)){
+      move2();
+    }
     for(int i = 0 ;i < Figuras.length; i++)  //ciclo para comparar la figura actual con todas las demas
     {
       if (this.id != i)  //condicion para no tomar encuenta la comparacion con la misma figura
       {
         if(this.intersect(Figuras[i]))  //metodo para comparar si hay interseccion de la figura actual con alunas otras del arreglo
           {
-             this.follow = true;
-             this.distance[ind].id = i; 
-             this.distance[ind].distance = this.location.dist(Figuras[i].location);
-             dis = this.location.dist(Figuras[i].location);
-             this.distance[ind].color_ = buscar_color(dis,size_shape);
-             c = this.distance[ind].color_;
-//             if(this.c >= 9){
-//               this.c = 9;
-//             }
-//             else {
-//               this.c ++;
-//             }
-             stroke(colors[c]);
-             //line(this.location.x,this.location.y,Figuras[i].location.x,Figuras[i].location.y);
-             if(configuration[6] == 1.0){
-               //this.highlight();
-             } 
-            
-             if(configuration[7] == 1.0){          
-               if((this.id < Figuras[i].id))
-               {
-                 newlocation.add(this.location); newlocation.sub(Figuras[i].location);
-                 newlocation.mult(0.015);
-                 this.location.sub(newlocation);
-                 newvelocity.set(Figuras[i].velocity);
-                 newvelocity.mult(0.10);              
-               }
-             }
-             ind ++;   
+            this.follow = true;
+            this.distance[ind].id = i; 
+            this.distance[ind].distance = this.location.dist(Figuras[i].location);
+            dis = this.location.dist(Figuras[i].location);
+            this.distance[ind].color_ = buscar_color(dis,size_shape);
+            if(configuration[6] == 1.0){
+              c = this.distance[ind].color_;
+            } 
+             
+            //stroke(colors[c]);
+            //line(this.location.x,this.location.y,Figuras[i].location.x,Figuras[i].location.y);
+            if(configuration[6] == 1.0){
+              //this.highlight();
+            } 
+            if(configuration[7] == 1.0){          
+              if((this.id < Figuras[i].id))
+              {
+//              newlocation.add(this.location); newlocation.sub(Figuras[i].location);
+//              newlocation.mult(0.015);
+//              this.location.sub(newlocation);
+//              newvelocity.set(Figuras[i].velocity);
+//              newvelocity.mult(0.10);  
+     
+                newlocation.add(this.velocity); newlocation.sub(Figuras[i].velocity);  
+                newlocation.mult(0.015);  
+                this.velocity.sub(newlocation);        
+              }
+            }
+            ind ++;   
           }
           else {
             this.follow = false;
-            if(this.c >= 9){
-              this.c = 0;
-            } 
           }  //pone en falso la variable que follow       
-       } 
-     }
-     if(configuration[8] == 0.0){
-       Constrain_to_surface();
-     }
-     else if(configuration[8] == 1.0){
-       if(configuration[10] == 0.0){
-        
-         if(this.location.x > width){
-           this.location.x  = width/2;
-           this.location.y  = height/2;
-         }
-         if(this.location.x < 0){
-           this.location.x  = width/2;
-           this.location.y  = height/2;
-         }
-         if(this.location.y > height){
-           this.location.y  = height/2;
-           this.location.x  = width/2;
-         }
-         if(this.location.y < 0){
-          this.location.y  = height/2;
-          this.location.x  = width/2;
-        }
+        } 
+      }
+      if(configuration[8] == 0.0){
+        println("si entra");
+        Constrain_to_surface();
       }
       else if(configuration[8] == 1.0){
-        if(configuration[10] == 1.0){
+        if(configuration[10] == 0.0){
           if(this.location.x > width){
-            this.location.y = (height / 2);
-            this.location.x = random (1,width);
+            this.location.x  = width/2;
+            this.location.y  = height/2;
+            velocity = new PVector(random(-1,1),random(-1,1)); 
+            
           }
           if(this.location.x < 0){
-            this.location.y = (height / 2);
-            this.location.x = random (1,width);
+            this.location.x  = width/2;
+            this.location.y  = height/2;
+            velocity = new PVector(random(-1,1),random(-1,1));
           }
           if(this.location.y > height){
-            this.location.y = (height / 2);
-            this.location.x = random (1,width);
+            this.location.y  = height/2;
+            this.location.x  = width/2;
+            velocity = new PVector(random(-1,1),random(-1,1));
           }
           if(this.location.y < 0){
-            this.location.y = (height / 2);
-            this.location.x = random (1,width);
-          }
-        }
-      }
-      else {
-        Constrain_to_surface2();
-      } 
-    }  
+           this.location.y  = height/2;
+           this.location.x  = width/2;
+           velocity = new PVector(random(-1,1),random(-1,1));
+         }
+       }
+       else if(configuration[8] == 1.0){
+         if(configuration[10] == 1.0){
+           if(this.location.x > width){
+             this.location.y = (height / 2);
+             this.location.x = random (1,width);
+           }
+           if(this.location.x < 0){
+             this.location.y = (height / 2);
+             this.location.x = random (1,width);
+           }
+           if(this.location.y > height){
+             this.location.y = (height / 2);
+             this.location.x = random (1,width);
+           }
+           if(this.location.y < 0){
+             this.location.y = (height / 2);
+             this.location.x = random (1,width);
+           }
+         }
+       else if(configuration[8] == 1.0){
+         if(configuration[10] == 2.0){
+           if(this.location.x > width){
+             this.location.x = (width / 2);
+             this.location.y = random (1,height);
+           }
+           if(this.location.x < 0){
+             this.location.x = (width / 2);
+             this.location.y = random (1,height);
+           }
+           if(this.location.y > height){
+             this.location.x = (width / 2);
+             this.location.y = random (1,height);
+           }
+           if(this.location.y < 0){
+             this.location.x = (width / 2);
+             this.location.y = random (1,height);
+           }
+         } 
+       else if(configuration[8] == 1.0){
+         if(configuration[10] == 3.0){
+           if(this.location.x > width){
+             this.location.x = this.location.x - this.location.x;            
+           }
+           if(this.location.x < 0){
+             this.location.x = width;
+           }
+           if(this.location.y > height){
+             this.location.y = 0;
+           }
+           if(this.location.y < 0){
+             this.location.y = height;
+           }
+         } 
+       }
+     }  
+   }
+ } 
    
-    //velocity.add(acceleration);
-    velocity.limit(topspeed);
-    location.add(velocity);  //agrega velocidad a la localizacion actual
-    
-  }
+ //velocity.add(acceleration);
+ velocity.limit(topspeed);
+ location.add(velocity);  //agrega velocidad a la localizacion actual 
+}
   //Selimita la simulacion a un espacio
   void Constrain_to_surface()
   {
@@ -180,6 +200,7 @@ abstract class Figura
   {
     if(this.location.x > width){
       this.location.x  = 0;
+      this.location.y  = 0;
     }
     if(this.location.x < 0){
       this.location.x  = width;
@@ -192,22 +213,55 @@ abstract class Figura
     }
   } 
  //metodo que cambia de color las figuras para denotar que estan sobrepuestas
-  int highlight(int c_frame) 
+  void highlight() 
   {
-    if((c_frame >= 0) &&(c_frame <=10)){
-      return  0;
+    if(configuration[6] == 0){
+      if(configuration[11] == 0){
+        stroke(colors[c]);
+      }
+      if(configuration[11] == 1.0){
+        fill(colors[c + 1]);
+        stroke(colors[c + 1]);
+      }
     }
-    else if((c_frame >= 11) &&(c_frame <=20)){
-      return  2;
+    if(configuration[6] == 1.0){
+      if(configuration[11] == 0){
+        stroke(colors[c]);
+      }
+      if(configuration[11] == 1.0){
+        fill(colors[c]);
+        noStroke();
+      }
     }
-    else if((c_frame >= 21) &&(c_frame <=30)){
-      return  4;
+    if(configuration[6] == 2.0){
+      c--;
+      if(configuration[11] == 0){
+        stroke(c);
+      }
+      if(configuration[11] == 1.0){
+        fill(c - 80);
+        noStroke();
+      }
     }
-    else if((c_frame >= 31) &&(c_frame <=40)){
-      return  6;
+    if(configuration[6] == 3.0){
+      c = (c + 1) % 256;
+      if(configuration[11] == 0){
+        stroke(c,255,c,100);
+      }
+      if(configuration[11] == 1.0){
+        fill(c,255,255,100);
+        noStroke();
+      }
     }
-    else{
-      return  8;
+    if(configuration[6] == 4.0){
+      c = (c + 1) % 256;
+      if(configuration[11] == 0){
+        stroke(c,20);
+      }
+      if(configuration[11] == 1.0){
+        fill(c,100);
+        stroke(c,100);
+      }
     }
   }
   //metodo que identifica si hay sobreposicion
@@ -306,64 +360,77 @@ class Circulo extends Figura
   
   void display(Figura[] Figuras) //metodo que dibuja las figuras
   {
-    for(int i = 0 ;i < Figuras.length; i++)  //ciclo para comparar la figura actual con todas las demas
-    {
-      if (this.id != i)  //condicion para no tomar encuenta la comparacion con la misma figura
-      {
-        if(this.intersect(Figuras[i]))  //metodo para comparar si hay interseccion de la figura actual con alunas otras del arreglo
-        {
-          stroke(c);
-          ellipseMode(CENTER);
-          ellipse(this.location.x,this.location.y,this.size_shape,this.size_shape);
-          this.c = color(100,50);
+    if(configuration[4] == 1.0){
+      if(configuration[5] == 1.0){
+        for(int i = 0 ;i < Figuras.length; i++){  //ciclo para comparar la figura actual con todas las demas
+          if (this.id != i){  //condicion para no tomar encuenta la comparacion con la misma figura
+            if(this.intersect(Figuras[i])){  //metodo para comparar si hay interseccion de la figura actual con alunas otras del arreglo
+              highlight();
+              ellipse(this.location.x,this.location.y,size_shape,size_shape);
+            }
+          }
         }
       }
-    }  
+      else{
+          highlight();
+          ellipse(this.location.x,this.location.y,size_shape,size_shape);
+      }
+    }   
   }
 }
 
 class Cuadro extends Figura
 {
-  Cuadro(int id_temp, int tam, float[] config)
-  {
+  Cuadro(int id_temp, int tam, float[] config){
     super(id_temp, tam, config);
   }
-  void update(Figura[] Figuras)
-  {
+  void update(Figura[] Figuras){
     super.update(Figuras);
   }
   
   void display(Figura[] Figuras) //metodo que dibuja las figuras
   {   
-    for(int i = 0 ;i < Figuras.length; i++)  //ciclo para comparar la figura actual con todas las demas
-    {
-      if (this.id != i)  //condicion para no tomar encuenta la comparacion con la misma figura
-      {
-        if(this.intersect(Figuras[i]))  //metodo para comparar si hay interseccion de la figura actual con alunas otras del arreglo
-        {
-          stroke(colors[c]);                      
-          rectMode(CENTER);
-          //line(this.location.x,this.location.y,Figuras[i].location.x,Figuras[i].location.y);
-          if(configuration[9] == 1.0){
-            pushMatrix();
-              translate(this.location.x, this.location.y);
-              rotate(counter*TWO_PI/360);
-              stroke(colors[c]);
-              //fill(255);
-              rect(0,0,this.size_shape,this.size_shape);
-              //line(this.location.x,this.location.y,Figuras[i].location.x,Figuras[i].location.y);
-            popMatrix();
-            counter++; 
-            println(c);
-          }
-          else{
-//            counter++;
-            //fill(255);
-            rect(this.location.x,this.location.y,this.size_shape,this.size_shape);
+    if(configuration[5] == 1.0){
+      for(int i = 0 ;i < Figuras.length; i++){  //ciclo para comparar la figura actual con todas las demas
+        if (this.id != i){  //condicion para no tomar encuenta la comparacion con la misma figura
+          if(this.intersect(Figuras[i])){  //metodo para comparar si hay interseccion de la figura actual con alunas otras del arreglo
+            highlight();
+            //stroke(colors[c]);                      
+            rectMode(CENTER);
             //line(this.location.x,this.location.y,Figuras[i].location.x,Figuras[i].location.y);
+            if(configuration[9] == 1.0){
+              pushMatrix();
+                translate(this.location.x, this.location.y);
+                rotate(counter*TWO_PI/360);
+                //stroke(colors[c]);
+                rect(0,0,this.size_shape,this.size_shape);
+                line(this.location.x,this.location.y,Figuras[i].location.x,Figuras[i].location.y);
+              popMatrix();
+              counter++; 
+              //println(c);
+            }
+            else{
+              //rect(this.location.x,this.location.y,this.size_shape,this.size_shape);
+              line(this.location.x,this.location.y,Figuras[i].location.x,Figuras[i].location.y);
+            }
           }
         }
       }
+    }
+    if(configuration[5] == 0){                  
+            rectMode(CENTER);
+            if(configuration[9] == 1.0){
+              pushMatrix();
+                translate(this.location.x, this.location.y);
+                rotate(counter*TWO_PI/360);
+                highlight();
+                rect(0,0,this.size_shape,this.size_shape);
+              popMatrix();
+              counter++;; 
+            }
+            else{
+              rect(this.location.x,this.location.y,this.size_shape,this.size_shape);
+            }
     }
   }
 }
@@ -386,36 +453,142 @@ class Triangule extends Figura
   
   void display(Figura[] Figuras) //metodo que dibuja las figuras
   {
-    for(int i = 0 ;i < Figuras.length; i++)  //ciclo para comparar la figura actual con todas las demas
+    if(configuration[5] == 1.0){
+      for(int i = 0 ;i < Figuras.length; i++){  //ciclo para comparar la figura actual con todas las demas
+        if (this.id != i){  //condicion para no tomar encuenta la comparacion con la misma figura
+          if(this.intersect(Figuras[i])){  //metodo para comparar si hay interseccion de la figura actual con alunas otras del arreglo
+            radio = (size_shape * 2.3)/4;
+            a.x = location.x;
+            a.y = location.y - radio;
+            b.x = (location.x - (radio * cos(theta)));
+            b.y = (location.y + (radio * sin(theta)));
+            C.x = (location.x + (radio * cos(theta)));
+            C.y = (location.y + (radio * sin(theta)));
+            if((configuration[9] == 1.0)){
+              pushMatrix();
+                translate(this.location.x,this.location.y);
+                rotate(counter*TWO_PI/360);
+                translate(this.location.x * (-1),this.location.y * (-1));
+                highlight();
+                //stroke(colors[c]);
+                triangle(this.a.x,this.a.y,this.b.x,this.b.y,this.C.x,this.C.y);
+              popMatrix();
+              counter = counter + 1;
+            }
+            else{
+              triangle(this.a.x,this.a.y,this.b.x,this.b.y,this.C.x,this.C.y);
+            }
+          }
+        }
+      }
+    }
+    if(configuration[5] == 0){
+            radio = (size_shape * 2.3)/4;
+            a.x = location.x;
+            a.y = location.y - radio;
+            b.x = (location.x - (radio * cos(theta)));
+            b.y = (location.y + (radio * sin(theta)));
+            C.x = (location.x + (radio * cos(theta)));
+            C.y = (location.y + (radio * sin(theta)));
+            if((configuration[9] == 1.0)){
+              pushMatrix();
+                translate(this.location.x,this.location.y);
+                rotate(counter*TWO_PI/360);
+                translate(this.location.x * (-1),this.location.y * (-1));
+                highlight();
+                //stroke(colors[c]);
+                triangle(this.a.x,this.a.y,this.b.x,this.b.y,this.C.x,this.C.y);
+              popMatrix();
+              counter++;
+            }
+            else{
+              triangle(this.a.x,this.a.y,this.b.x,this.b.y,this.C.x,this.C.y);
+            }
+    }   
+  }
+} 
+
+class Linea extends Figura
+{
+  Linea(int id_temp, int tam, float[] config)
+  {
+    super(id_temp, tam, config);
+  }
+  void update(Figura[] Figuras)
+  {
+    super.update(Figuras);
+  }
+  
+  void display(Figura[] Figuras) //metodo que dibuja las figuras
+  {
+    PVector nl = new PVector(0,0);
+    PVector n2 = new PVector(0,0);
+    if((configuration[12] == 1.0) && (configuration[13] == 0.0)){
+      nl.add(this.location);
+      highlight();
+      ellipseMode(CENTER);
+      for(int ii = 0; ii < 60 ;ii++){
+        nl.sub(this.velocity);
+      }
+      if(configuration[9] == 1.0){
+        translate(this.velocity.x, this.velocity.y);
+        this.velocity.rotate(counter*TWO_PI/360);
+      }
+      line(this.location.x,this.location.y,nl.x,nl.y);
+      counter=1; 
+    }
+    
+    else if((configuration[12] == 1.0) && (configuration[13] == 1.0)){
+      nl.add(this.location);
+      n2.add(this.location);
+      //if(configuration[4] == 1.0){
+      highlight();
+      //stroke(255);
+      ellipseMode(CENTER);
+      for(int ii = 0; ii < 30 ;ii++){
+        nl.sub(this.velocity);
+        n2.add(this.velocity);
+      }
+      translate(this.velocity.x, this.velocity.y);
+      this.velocity.rotate(counter*TWO_PI/360);
+      line(n2.x,n2.y,nl.x,nl.y);
+      if (bandera == true){ 
+        counter++;
+        if(counter == 4){
+          bandera = false;
+        }
+      }
+      else if(bandera == false) {
+        counter--;
+        if(counter == -4){
+          bandera = true;
+        }
+      }
+    } 
+    else if((configuration[12] == 1.0) && (configuration[13] == 2.0)){
+       for(int i = 0 ;i < Figuras.length; i++)  //ciclo para comparar la figura actual con todas las demas
     {
       if (this.id != i)  //condicion para no tomar encuenta la comparacion con la misma figura
       {
         if(this.intersect(Figuras[i]))  //metodo para comparar si hay interseccion de la figura actual con alunas otras del arreglo
         {
-          radio = (size_shape * 2.3)/4;
-          a.x = location.x;
-          a.y = location.y - radio;
-          b.x = (location.x - (radio * cos(theta)));
-          b.y = (location.y + (radio * sin(theta)));
-          C.x = (location.x + (radio * cos(theta)));
-          C.y = (location.y + (radio * sin(theta)));
-          if((configuration[9] == 1.0)){
-            pushMatrix();
-              translate(this.location.x,this.location.y);
-              rotate(counter*TWO_PI/360);
-              translate(this.location.x * (-1),this.location.y * (-1));
-              stroke(colors[c]);
-              triangle(this.a.x,this.a.y,this.b.x,this.b.y,this.C.x,this.C.y);
-            popMatrix();
-            counter = counter + 1;
+          highlight();
+          ellipseMode(CENTER);
+          nl.add(Figuras[i].location);
+          nl.add(this.location);
+          nl.div(2);
+          float distance = this.location.dist(nl); 
+          println(distance);
+          if(distance >= 10){
+            line(this.location.x,this.location.y,nl.x,nl.y);
           }
-          else{
-            //fill(255);
-            triangle(this.a.x,this.a.y,this.b.x,this.b.y,this.C.x,this.C.y);
-          }
+          nl.x = 0;
+          nl.y = 0;
         }
       }
+    } 
     }
+    
   }
-}  
-
+}
+  
