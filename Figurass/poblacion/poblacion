@@ -1,0 +1,131 @@
+import random
+import numpy
+
+#----------------------inicializar la poblacion-----------------------------------------------------
+def init_pop():
+    populationSize = 5
+    listSize = 14
+    chrome  = []
+    #server = Population(popName)
+    #server.initialize()
+    for individual in range(populationSize):
+        for i in range(listSize):
+            if (i == 0):
+                aux = random.randint(50,200)
+            elif(i == 1):
+                aux = random.randint(50,80)
+            elif(i == 2):
+                aux = random.randint(0,1)
+            elif(i == 3):
+                aux = random.randint(0,1)
+            elif(i == 4):
+                aux = random.randint(0,1)
+            elif(i == 5):
+                aux = random.randint(0,1)
+            elif(i == 6):
+                aux = random.randint(0,4)
+            elif(i == 7):
+                aux = random.randint(0,1)
+            elif(i == 8):
+                aux = random.randint(0,1)
+            elif(i == 9):
+                aux = random.randint(0,1)
+            elif(i == 10):
+                aux = random.randint(0,3)
+            elif(i == 11):
+                aux = random.randint(0,1)
+            elif(i == 12):
+                aux = random.randint(0,1)
+            elif(i == 13):
+                aux = random.randint(0,3)
+            chrome.insert(i,aux)
+        individual = {"id":None,"fitness":{"DefaultContext":0.0 },"chromosome":chrome,"views":0}
+        #server.put_individual(**individual)
+        print chrome
+        for x in chrome[:]:
+            chrome.remove(x)
+#-----------------------------------Termina la funcion de init pop--------------------------------------
+#init_pop()
+
+#---------------------funcion de cruce----------------------------------------------------
+def crossHorizontal():
+    populationSize = 5
+    listSize = 5
+    #genera dos listas simulando los dos padres de la poblacion
+    for individual in range(populationSize):
+        papa = [random.randint(0,9) for _ in range(listSize)]
+    for individual in range(populationSize):
+        mama = [random.randint(0,9) for _ in range(listSize)]
+    # papa y mama obtenidos
+
+    #convertir a arreglos papa y mama
+    papa = numpy.array(papa)
+    mama = numpy.array(mama)
+
+    cut = random.randint(0,listSize)
+    if cut == 0: #Si la dimension es 1
+        papa_cut1 = papa[cut]
+        mama_cut1 = mama[cut]
+        papa_cut2 = papa[cut+1:]
+        mama_cut2 = mama[cut+1:]
+        child1 = numpy.hstack((papa_cut1,mama_cut2))
+        child2 = numpy.hstack((papa_cut2,mama_cut1))
+    else:
+        papa_cut1 = papa[:cut]
+        mama_cut1 = mama[:cut]
+        papa_cut2 = papa[cut:]
+        mama_cut2 = mama[cut:]
+        child1 = numpy.hstack((papa_cut1,mama_cut2))
+        child2 = numpy.hstack((papa_cut2,mama_cut1))
+
+    papa = list(papa)
+    mama = list(mama)
+    child1 = list(child1)
+    child2 = list(child2)
+    # child1 = {'id':None,'fitness':{"DefaultContext":0.0 },
+    #           'chromosome':child1,
+    #           'papa': papa["id"], 'mama':mama["id"] ,
+    #           'crossover':'crossHorizontal:'+str(cut) }
+    # child2 = {'id':None,'fitness':{"DefaultContext":0.0 },
+    #           'chromosome':child2,
+    #           'papa': papa["id"], 'mama':mama["id"],
+    #           'crossover':'crossHorizontal:'+str(cut) }
+    # return child1,child2
+    print (papa)
+    print (mama)
+    print cut
+    print ("papa 1 ",papa_cut1)
+    print ("mama 1 ",mama_cut1)
+    print ("papa 2 ",papa_cut2)
+    print ("mama 2 ",mama_cut2)
+    print ("hijo 1 ",child1)
+    print ("hijo 2 ",child2)
+#-----------------termina funcion de cruce-------------------------------------------------
+#crossHorizontal()
+
+#----------------mutacion barajar---------------------------------------------------------------------------
+def mut_shuffle():
+    listSize = 5
+    individual = [random.randint(0,9) for x in range(listSize)]
+    print individual
+    random.shuffle(individual)
+    print individual
+#---------------termina funcion barajar-----------------------------------------------------------------
+#mut_shuffle()
+
+
+#--------------funcion reemplazar---------------------------------------------------------------------
+def mut_replace():
+    listSize = 5
+    individual = [random.randint(0,9) for x in range(listSize)]
+    #print individual
+    replace = random.choice (individual)
+    #print replace
+    replace_to = random.choice(individual)
+    #print replace_to
+    #print replace, ">>", replace_to
+    individual =  [replace_to if x==replace else x for x in individual]
+    #print individual
+#----------------------termina funcion reemplazar-------------------------------------------------------------
+#mut_replace()
+
