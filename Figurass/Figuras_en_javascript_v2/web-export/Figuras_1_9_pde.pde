@@ -8,15 +8,15 @@ float tamano = 80;//random(10,30); //1
 int triangulo =  0;           //2 
 int cuadro =     0;           //3
 int circulo =    0;           //4
-int traslape =   0;           //5
+int traslape =   1;           //5
 int c_color =    4;           //6
 int segir_otro = 0;           //7    seguir o no  0-1
 int Const_surface = 1;        //8    restringido o no    0-1 
 int rotate_ =    1;           //9    0-1
-int moveini =    0;           //10   cuatro movimientosiniciales  0-3
+int moveini =    4;           //10   cuatro movimientosiniciales  0-3
 int criterio_color = 0;       //11 
 int linea =      1;           //12
-int tipo  =      1;           //13
+int tipo  =      2;           //13
 
 
 
@@ -25,7 +25,8 @@ int tipo  =      1;           //13
 void setup() 
 {
  begin(config);
- background(127,0,0);
+ //background(127,0,0);
+ Fondo();
  colorMode(HSB);
 }
 void draw() 
@@ -61,6 +62,18 @@ void draw()
   {
     loop();
     stop++;
+  }
+}
+void Fondo(){
+  int y = 0, col=int(random(0,256));
+  for(int i = 0;i < 400;i++){
+    noStroke();
+    fill(col,255,255,100);
+    rect(0,i,300,100);
+    if((y % 9) == 0){
+      col++; 
+    }
+    y++;
   }
 }
 
@@ -614,6 +627,8 @@ class Linea extends Figura
       n2.add(this.location);
       highlight();
       ellipseMode(CENTER);
+      float a = velocity.heading2D();
+      println(a);
       for(int ii = 0; ii < 30 ;ii++){
         nl.sub(this.velocity);
         n2.add(this.velocity);
@@ -809,4 +824,5 @@ void begin(float[] config)
     }    
   }
 }
+
 

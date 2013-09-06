@@ -553,7 +553,7 @@ class Linea extends Figura
         n2.add(this.velocity);
       }
       translate(this.velocity.x, this.velocity.y);
-      rotate2D(this.velocity, 10);
+      //rotate2D(this.velocity, 10);
       //this.velocity.rotate(counter*TWO_PI/360);
       line(n2.x,n2.y,nl.x,nl.y);
       if (bandera == true){ 

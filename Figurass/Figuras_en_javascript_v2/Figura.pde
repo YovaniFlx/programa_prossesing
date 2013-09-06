@@ -1,69 +1,3 @@
-//Programa principal
-//Yovani Felix
-//Figura[] Figuras = new Figura[200];
-float stop = 0;
-Figura[] Figuras;
-int total_figuras = 100;      //0
-float tamano = 80;//random(10,30); //1
-int triangulo =  0;           //2 
-int cuadro =     0;           //3
-int circulo =    0;           //4
-int traslape =   0;           //5
-int c_color =    4;           //6
-int segir_otro = 0;           //7    seguir o no  0-1
-int Const_surface = 1;        //8    restringido o no    0-1 
-int rotate_ =    1;           //9    0-1
-int moveini =    0;           //10   cuatro movimientosiniciales  0-3
-int criterio_color = 0;       //11 
-int linea =      1;           //12
-int tipo  =      1;           //13
-
-
-
- float[] config = {total_figuras, tamano, triangulo, cuadro, circulo, traslape, c_color, segir_otro, Const_surface, rotate_, moveini, criterio_color,linea,tipo};
-
-void setup() 
-{
- begin(config);
- background(127,0,0);
- colorMode(HSB);
-}
-void draw() 
-{
-  //background(127,0,0);
-  smooth();
-  noFill();
-  colorMode(HSB);
-  for(int i = 0;i < Figuras.length;i++)
-  {
-    Figuras[i].update(Figuras);     
-  } 
-  for(int i = 0;i < Figuras.length;i++)
-  {
-    Figuras[i].display(Figuras);
-  } 
-  
-//  mouseReleased();
-//  if(frameCount == 125){
-//    noLoop();
-//  }
-    
-  
-}
- void mousePressed()
- {
-   if((stop % 2) == 0)
-  {
-    noLoop();
-    stop ++;
-  }
-  else
-  {
-    loop();
-    stop++;
-  }
-}
-
 //Clase principal que contiene los atributos de la figura
 abstract class Figura 
 {
@@ -73,9 +7,9 @@ abstract class Figura
    boolean follow, bandera;  //variable booleana para saber si puede seguir a otro
    PVector location;  //variable que tiene la posicion actual de la figura
    PVector velocity;  //variable de la velocidad de la figura
-   color[] colors = new color[10];
-   int c, contframe = 0;
-   float counter = 0;
+   color[] colors = new color[10]; // variable de color
+   int c, contframe = 0; //variable de color
+   float counter = 0; //variable auxiliar de contador
    float topspeed;
    fig_distance[] distance = new fig_distance[1000];  //arreglo que guarda el id de la figura y la distancia cuando estan una sobre otra
   
@@ -91,7 +25,7 @@ abstract class Figura
     //acceleration = new PVector(-0.001,0.01);
     velocity = new PVector(random(-1,1),random(-1,1));
     for(int i = 0;i < distance.length; i++) {distance[i] = new fig_distance(-1, 0.0, 0);}
-
+//------------------------------una paleta de colores-------------------------------------------
       colors[0] = color(#B29253);
       colors[1] = color(#B29253);
       colors[2] = color(#07FF7F);
@@ -134,12 +68,6 @@ abstract class Figura
             if(configuration[6] == 1.0){
               c = this.distance[ind].color_;
             } 
-             
-            //stroke(colors[c]);
-            //line(this.location.x,this.location.y,Figuras[i].location.x,Figuras[i].location.y);
-            if(configuration[6] == 1.0){
-              //this.highlight();
-            } 
             if(configuration[7] == 1.0){          
               if((this.id < Figuras[i].id))
               {
@@ -148,7 +76,7 @@ abstract class Figura
 //              this.location.sub(newlocation);
 //              newvelocity.set(Figuras[i].velocity);
 //              newvelocity.mult(0.10);  
-     
+             //------------------calcula la aproximacion de las figuras---------------------------------
                 newlocation.add(this.velocity); newlocation.sub(Figuras[i].velocity);  
                 newlocation.mult(0.015);  
                 this.velocity.sub(newlocation);        
@@ -160,7 +88,7 @@ abstract class Figura
             this.follow = false;
           }  //pone en falso la variable que follow       
         } 
-      }
+      }    //-----------------------evaluacion de los movimientos-----------------------------------------------------
       if(configuration[8] == 0.0){
         Constrain_to_surface();
       }
@@ -245,12 +173,10 @@ abstract class Figura
      }  
    }
  } 
-   
- //velocity.add(acceleration);
  velocity.limit(topspeed);
  location.add(velocity);  //agrega velocidad a la localizacion actual 
 }
-  //Selimita la simulacion a un espacio
+  //Se limita la simulacion a un espacio
   void Constrain_to_surface()
   {
     if ((this.location.x > width) || (this.location.x < 0)) {  
@@ -277,7 +203,7 @@ abstract class Figura
       this.location.y  = height;
     }
   } 
- //metodo que cambia de color las figuras para denotar que estan sobrepuestas
+ //metodo que cambia de color las figuras 
   void highlight() 
   {
     if(configuration[6] == 0){
@@ -329,7 +255,7 @@ abstract class Figura
       }
     }
   }
-  //metodo que identifica si hay sobreposicion
+  //------------------metodo que identifica si hay sobreposicion---------------
   boolean intersect(Figura Figuras) 
   {
     float distance = this.location.dist(Figuras.location); 
@@ -342,7 +268,7 @@ abstract class Figura
       return false;
     }
   }
-  
+  //-------------------funcion de movimientos iniciales-----------------------------
   void move0()
   {
     this.location.x = (width / 2);
@@ -405,6 +331,7 @@ abstract class Figura
       return  0;
     }
   }
+  //-------------------funcion de rotacion---------------------------------------
   void rotate2D(PVector v, float theta) {
     float m = v.mag();
     float a = v.heading2D();
@@ -465,22 +392,18 @@ class Cuadro extends Figura
       for(int i = 0 ;i < Figuras.length; i++){  //ciclo para comparar la figura actual con todas las demas
         if (this.id != i){  //condicion para no tomar encuenta la comparacion con la misma figura
           if(this.intersect(Figuras[i])){  //metodo para comparar si hay interseccion de la figura actual con alunas otras del arreglo
-            highlight();
-            //stroke(colors[c]);                      
+            highlight();                      
             rectMode(CENTER);
-            //line(this.location.x,this.location.y,Figuras[i].location.x,Figuras[i].location.y);
             if(configuration[9] == 1.0){
               pushMatrix();
                 translate(this.location.x, this.location.y);
                 rotate(counter*TWO_PI/360);
-                //stroke(colors[c]);
                 rect(0,0,this.size_shape,this.size_shape);
                 line(this.location.x,this.location.y,Figuras[i].location.x,Figuras[i].location.y);
               popMatrix();
               counter++; 
             }
             else{
-              //rect(this.location.x,this.location.y,this.size_shape,this.size_shape);
               line(this.location.x,this.location.y,Figuras[i].location.x,Figuras[i].location.y);
             }
           }
@@ -540,7 +463,6 @@ class Triangule extends Figura
                 rotate(counter*TWO_PI/360);
                 translate(this.location.x * (-1),this.location.y * (-1));
                 highlight();
-                //stroke(colors[c]);
                 triangle(this.a.x,this.a.y,this.b.x,this.b.y,this.C.x,this.C.y);
               popMatrix();
               counter = counter + 1;
@@ -566,7 +488,6 @@ class Triangule extends Figura
                 rotate(counter*TWO_PI/360);
                 translate(this.location.x * (-1),this.location.y * (-1));
                 highlight();
-                //stroke(colors[c]);
                 triangle(this.a.x,this.a.y,this.b.x,this.b.y,this.C.x,this.C.y);
               popMatrix();
               counter++;
@@ -602,8 +523,8 @@ class Linea extends Figura
       }
       if(configuration[9] == 1.0){
         translate(this.velocity.x, this.velocity.y);
-        rotate2D(this.velocity, 10);
-        //this.velocity.rotate(counter*TWO_PI/360);
+        //rotate2D(this.velocity, 10);
+        this.velocity.rotate(counter*TWO_PI/360);
       }
       line(this.location.x,this.location.y,nl.x,nl.y);
       counter=1; 
@@ -614,6 +535,8 @@ class Linea extends Figura
       n2.add(this.location);
       highlight();
       ellipseMode(CENTER);
+      float a = velocity.heading2D();
+      println(a);
       for(int ii = 0; ii < 30 ;ii++){
         nl.sub(this.velocity);
         n2.add(this.velocity);
@@ -636,177 +559,24 @@ class Linea extends Figura
       }
     } 
     else if((configuration[12] == 1.0) && (configuration[13] == 2.0)){
-       for(int i = 0 ;i < Figuras.length; i++)  //ciclo para comparar la figura actual con todas las demas
-    {
-      if (this.id != i)  //condicion para no tomar encuenta la comparacion con la misma figura
-      {
-        if(this.intersect(Figuras[i]))  //metodo para comparar si hay interseccion de la figura actual con alunas otras del arreglo
-        {
-          highlight();
-          ellipseMode(CENTER);
-          nl.add(Figuras[i].location);
-          nl.add(this.location);
-          nl.div(2);
-          float distance = this.location.dist(nl); 
-          if(distance >= 10){
-            line(this.location.x,this.location.y,nl.x,nl.y);
+       for(int i = 0 ;i < Figuras.length; i++){  //ciclo para comparar la figura actual con todas las demas
+          if (this.id != i){  //condicion para no tomar encuenta la comparacion con la misma figura
+            if(this.intersect(Figuras[i])){  //metodo para comparar si hay interseccion de la figura actual con alunas otras del arreglo
+              highlight();
+              ellipseMode(CENTER);
+              nl.add(Figuras[i].location);
+              nl.add(this.location);
+              nl.div(2);
+              float distance = this.location.dist(nl); 
+              if(distance >= 10){
+                line(this.location.x,this.location.y,nl.x,nl.y);
+              }
+              nl.x = 0;
+              nl.y = 0;
+            }
           }
-          nl.x = 0;
-          nl.y = 0;
-        }
-      }
-    } 
+       } 
     }
-    
   }
 }
   
-//Clase que crea la variable distance de la clase principal
-class fig_distance
-{
-  int id;
-  float distance;
-  int color_;
-  
-  fig_distance(int temp_id,float temp_distance, int temp_color_)
-  {
-    id = temp_id;
-    distance = temp_distance;
-    color_ = temp_color_;
-  }  
-}
-
-void begin(float[] config)
-{
-  int tot_fig = (int)config[0];
-  int tam = (int)config[1];
-  Figuras = new Figura[tot_fig];
-  size(300,400);
-  background(0);
-  for (int i = 0; i < Figuras.length; i++)
-  {
-    float r = random(0,7);
-    if ((config[2] == 0.0) && (config[3] == 0.0) && (config[4] == 0.0) && (config[12] == 1.0)){
-      Figuras[i] = new Linea(i,tam,config);
-    }
-    else if ((config[2] == 0.0) && (config[3] == 0.0) && (config[4] == 1.0) && (config[12] == 0.0)){
-       Figuras[i] = new Circulo(i,tam,config);
-    }  
-    else if ((config[2] == 0.0) && (config[3] == 0.0) && (config[4] == 1.0) && (config[12] == 1.0)){
-      if (r < 3.5){
-         Figuras[i] = new Linea(i,tam,config);
-       }
-       else{
-         Figuras[i] = new Circulo(i,tam,config);                                                                  //TRI   CUA    CIR    LIN
-       }
-    }  
-    else if ((config[2] == 0.0) && (config[3] == 1.0) && (config[4] == 0.0) && (config[12] == 0.0)){
-       Figuras[i] = new Cuadro(i,tam,config);
-    }  
-    else if ((config[2] == 0.0) && (config[3] == 1.0) && (config[4] == 0.0) && (config[12] == 1.0)){
-       if (r < 3.5){
-         Figuras[i] = new Linea(i,tam,config);
-       }
-       else{
-         Figuras[i] = new Cuadro(i,tam,config);                                                                  //TRI   CUA    CIR    LIN
-       }
-    }  
-    else if ((config[2] == 0.0) && (config[3] == 1.0) && (config[4] == 1.0) && (config[12] == 0.0)){
-      if (r < 3.5){
-         Figuras[i] = new Cuadro(i,tam,config);
-       }
-       else{
-         Figuras[i] = new Circulo(i,tam,config);
-       }
-    }  
-    else if ((config[2] == 0.0) && (config[3] == 1.0) && (config[4] == 1.0) && (config[12] == 1.0)){
-      if (r < 2.33){
-        Figuras[i] = new Circulo(i,tam,config);
-      }
-      else if((r > 2.33) && (r < 4.66) ){
-        Figuras[i] = new Cuadro(i,tam,config);
-      }   
-      else{
-        Figuras[i] = new Linea(i,tam,config);
-      }
-    }
-    else if ((config[2] == 1.0) && (config[3] == 0.0) && (config[4] == 0.0) && (config[12] == 0.0)){           //TRI   CUA    CIR    LIN
-       Figuras[i] = new Triangule(i,tam,config);
-    }
-    else if ((config[2] == 1.0) && (config[3] == 0.0) && (config[4] == 0.0) && (config[12] == 1.0)){
-      if (r < 3.5){
-         Figuras[i] = new Triangule(i,tam,config);
-       }
-       else{
-         Figuras[i] = new Linea(i,tam,config);
-       }
-    }   
-    else if ((config[2] == 1.0) && (config[3] == 0.0) && (config[4] == 1.0) && (config[12] == 0.0)){
-      if (r < 3.5){
-         Figuras[i] = new Triangule(i,tam,config);
-       }
-       else{
-         Figuras[i] = new Circulo(i,tam,config);
-       }
-    }
-    else if ((config[2] == 1.0) && (config[3] == 0.0) && (config[4] == 1.0) && (config[12] == 1.0)){      //TRI   CUA    CIR    LIN
-      if (r < 2.33){
-        Figuras[i] = new Circulo(i,tam,config);
-      }
-      else if((r > 2.33) && (r < 4.66) ){
-        Figuras[i] = new Triangule(i,tam,config);
-      }   
-      else{
-        Figuras[i] = new Linea(i,tam,config);
-      }
-    }  
-    else if ((config[2] == 1.0) && (config[3] == 1.0) && (config[4] == 0.0) && (config[12] == 0.0)){
-      if (r < 3.5){
-         Figuras[i] = new Triangule(i,tam,config);
-       }
-       else{
-         Figuras[i] = new Cuadro(i,tam,config);
-       }
-    }
-    else if ((config[2] == 1.0) && (config[3] == 1.0) && (config[4] == 0.0) && (config[12] == 1.0)){          //TRI   CUA    CIR    LIN
-      if (r < 2.33){
-        Figuras[i] = new Linea(i,tam,config);
-      }
-      else if((r > 2.33) && (r < 4.66) ){
-        Figuras[i] = new Triangule(i,tam,config);
-      }   
-      else{
-        Figuras[i] = new Cuadro(i,tam,config);
-      }
-    }   
-    else if ((config[2] == 1.0) && (config[3] == 1.0) && (config[4] == 1.0) && (config[12] == 0.0)){
-      if (r < 2.33){
-        Figuras[i] = new Circulo(i,tam,config);
-      }
-      else if((r > 2.33) && (r < 4.66) ){
-        Figuras[i] = new Triangule(i,tam,config);
-      }   
-      else{
-        Figuras[i] = new Cuadro(i,tam,config);
-      }
-    }
-    else if ((config[2] == 1.0) && (config[3] == 1.0) && (config[4] == 1.0) && (config[12] == 1.0)){                 //TRI   CUA    CIR    LIN
-      if (r < 1.75){
-        Figuras[i] = new Circulo(i,tam,config);
-      }
-      else if((r > 1.75) && (r < 3.5) ){
-        Figuras[i] = new Triangule(i,tam,config);
-      }   
-      else if((r > 3.5) && (r < 5.25) ){
-        Figuras[i] = new Cuadro(i,tam,config);
-      }
-      else{
-        Figuras[i] = new Linea(i,tam,config);
-      }
-    }  
-    else{
-      exit();
-    }    
-  }
-}
-

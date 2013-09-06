@@ -3,20 +3,20 @@
 //Figura[] Figuras = new Figura[200];
 float stop = 0;
 Figura[] Figuras;
-int total_figuras = 10;      //0
+int total_figuras = 100;      //0
 float tamano = 80;//random(10,30); //1
 int triangulo =  0;           //2 
 int cuadro =     0;           //3
 int circulo =    0;           //4
-int traslape =   1;           //5
+int traslape =   0;           //5
 int c_color =    4;           //6
 int segir_otro = 0;           //7    seguir o no  0-1
 int Const_surface = 1;        //8    restringido o no    0-1 
 int rotate_ =    1;           //9    0-1
-int moveini =    3;           //10   cuatro movimientosiniciales  0-3
+int moveini =    0;           //10   cuatro movimientosiniciales  0-3
 int criterio_color = 0;       //11 
 int linea =      1;           //12
-int tipo  =      2;           //13
+int tipo  =      1;           //13
 
 
 
